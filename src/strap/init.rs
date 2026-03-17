@@ -1,0 +1,54 @@
+use std::io::{self,Write};
+use rustyline::DefaultEditor;
+use colored::*;
+use std::env;
+use crate::handler::check;
+use rustyline::error::ReadlineError;
+
+fn get_display_dir() -> String {
+    let dir = env::current_dir().unwrap();
+    let home = env::var("HOME").unwrap();
+
+    let path = dir.display().to_string();
+
+    if path.starts_with(&home) {
+        path.replacen(&home, "~", 1)
+    } else {
+        path
+    }
+}
+
+pub fn init() {
+    let mut rl = DefaultEditor::new().unwrap();
+    //println!("Buche Shell 0.01 Testing enviorment");
+    //println!("Made with love ");
+    //println!("------------------------------------");
+    ctrlc::set_handler(|| {}).unwrap();
+    loop {
+        let cpath = get_display_dir();
+        let prompt = format!("[{}]{}",cpath.cyan(),">>".cyan());
+        //print!("[{}] >>",get_display_dir());
+        let input_command = match rl.readline(&prompt) {
+    Ok(input) => {
+        rl.add_history_entry(input.as_str());
+        input
+    }
+    Err(ReadlineError::Interrupted) => {
+        println!(); // Ctrl+C
+        continue;
+    }
+    Err(ReadlineError::Eof) => {
+        break; // Ctrl+D exits shell
+    }
+    Err(err) => {
+        println!("Error: {:?}", err);
+        break;
+    }
+    };
+        let input_command = input_command
+            .trim();
+            io::stdout().flush().unwrap();
+        check::checkcmd(&input_command);
+  }
+}
+
