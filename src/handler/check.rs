@@ -71,6 +71,9 @@ pub fn checkutils(utilcmd: &str, cmdargs: &Vec<&str>) {
         "ls" => {
             run::ls(&cmdargs);
         }
+        "mv" => {
+            run::mv(&cmdargs);
+        }
         _ => {
             println!(
                 "{}",
