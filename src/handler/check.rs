@@ -4,6 +4,7 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::Path;
 use std::process::{Command, Stdio};
+use crate::logger::buchelog::{log_info, log_warn, log_error};
 
 const USERPATH: &str = "/usr/bin/";
 const TERMUXPATH: &str = "/data/data/com.termux/files/usr/bin/";
@@ -11,6 +12,7 @@ const SHELLPATH: &str = "/bin/";
 
 pub fn checkcmd(input_command: &str) {
     if input_command.is_empty() {
+        log_warn("Input command empty. Returning");
         return;
     }
 
@@ -36,14 +38,22 @@ pub fn checkcmd(input_command: &str) {
     let shellpath = format!("{}{}", SHELLPATH, cmd);
 
     let mut command_to_run = if Path::new(&termuxpath).exists() && !checkforbuiltin(cmd) {
+        //Command::new(&termuxpath);
+        log_info("Ran command succesfully");
         Command::new(&termuxpath)
+        //log_info("Running command : {termuxpath}")
     } else if Path::new(&userpath).exists() && !checkforbuiltin(cmd) {
+        //Command::new(&userpath);
+        log_info("Ran command succesfully");
         Command::new(&userpath)
     } else if Path::new(&shellpath).exists() && !checkforbuiltin(cmd) {
+        //Command::new(&shellpath);
+        log_info("Ran command succesfully");
         Command::new(&shellpath)
     } else {
         checkutils(&cmd, &cmdargs);
-        return;
+        log_warn("Passing unknown command to utils checker");
+        return; 
     };
 
     command_to_run.args(&cmdargs);
@@ -77,7 +87,10 @@ pub fn checkutils(utilcmd: &str, cmdargs: &Vec<&str>) {
         "cp" => run::cp(&cmdargs),
         "ls" => run::ls(&cmdargs),
         "mv" => run::mv(&cmdargs),
-        _ => println!("{}", "Not available in bsh library, maybe it is not installed?".yellow()),
+        _ => {
+            log_error("Unknown command");
+            println!("{}", "Not available in bsh library, maybe it is not installed?".yellow());
+        }
     };
 }
 
