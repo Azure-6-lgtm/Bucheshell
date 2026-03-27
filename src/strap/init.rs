@@ -4,6 +4,7 @@ use colored::*;
 use std::env;
 use crate::handler::check;
 use rustyline::error::ReadlineError;
+use crate::logger::buchelog::{log_info, log_warn, log_error};
 
 fn get_display_dir() -> String {
     let dir = env::current_dir().unwrap();
@@ -20,6 +21,7 @@ fn get_display_dir() -> String {
 
 pub fn init() {
     let mut rl = DefaultEditor::new().unwrap();
+    log_info("Bootstrap started");
     //println!("Buche Shell 0.01 Testing enviorment");
     //println!("Made with love ");
     //println!("------------------------------------");
@@ -49,6 +51,7 @@ pub fn init() {
             .trim();
             io::stdout().flush().unwrap();
         check::checkcmd(&input_command);
+        log_info("Command passed to handler");
   }
 }
 
