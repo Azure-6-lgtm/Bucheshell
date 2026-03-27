@@ -8,12 +8,12 @@ but atleast it works
 
 ##Installation
 Just clone the repo and build it with cargo
-'''bash
+```bash
 git clone https://github.com/Azure-6-lgtm/Bucheshell
-'''
-'''bash
+```
+```bash
 cd Bucheshell
-'''
-'''bash
+```
+```bash
 cargo build --release
-'''
+```
