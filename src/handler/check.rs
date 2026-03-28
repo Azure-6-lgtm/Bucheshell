@@ -39,16 +39,19 @@ pub fn checkcmd(input_command: &str) {
 
     let mut command_to_run = if Path::new(&termuxpath).exists() && !checkforbuiltin(cmd) {
         //Command::new(&termuxpath);
-        log_info("Ran command succesfully");
+        //log_info("Ran command succesfully {termuxpath}");
+        log_info(&format!("Ran command succesfully {}", termuxpath));
         Command::new(&termuxpath)
         //log_info("Running command : {termuxpath}")
     } else if Path::new(&userpath).exists() && !checkforbuiltin(cmd) {
         //Command::new(&userpath);
-        log_info("Ran command succesfully");
+        //log_info("Ran command succesfully {userpath}");
+        log_info(&format!("Ran command succesfully {}", userpath));
         Command::new(&userpath)
     } else if Path::new(&shellpath).exists() && !checkforbuiltin(cmd) {
         //Command::new(&shellpath);
-        log_info("Ran command succesfully");
+        //log_info("Ran command succesfully {shellpath}");
+        log_info(&format!("Ran command succesfully {}", shellpath));
         Command::new(&shellpath)
     } else {
         checkutils(&cmd, &cmdargs);
