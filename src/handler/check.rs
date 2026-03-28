@@ -78,18 +78,54 @@ pub fn checkcmd(input_command: &str) {
 
 pub fn checkutils(utilcmd: &str, cmdargs: &Vec<&str>) {
     match utilcmd {
-        "cd" => run::builtin_cd(&cmdargs),
-        "ver" => run::bshversion(),
-        "help" => run::help(),
-        "about" => run::aboutbsh(),
-        "exit" => run::exit(),
-        "mkdir" => run::mkdir(&cmdargs),
-        "rm" => run::rm(&cmdargs),
-        "rmdir" => run::rmdir(&cmdargs),
-        "touch" => run::touch(&cmdargs),
-        "cp" => run::cp(&cmdargs),
-        "ls" => run::ls(&cmdargs),
-        "mv" => run::mv(&cmdargs),
+        "cd" => {
+            log_info("Ran builtin command: cd");
+            run::builtin_cd(&cmdargs);
+        }
+        "ver" => {
+            log_info("Ran builtin command: ver");
+            run::bshversion();
+        }
+        "help" => {
+            log_info("Ran builtin command: help");
+            run::help();
+        }
+        "about" => {
+            log_info("Ran builtin command: about");
+            run::aboutbsh();
+        }
+        "exit" => {
+            log_info("Exiting cell :(");
+            run::exit();
+        }
+        "mkdir" => {
+            log_info("Ran builtin command: mkdir");
+            run::mkdir(&cmdargs);
+        }
+        "rm" => {
+            log_info("Ran builtin command: rm");
+            run::rm(&cmdargs);
+        }
+        "rmdir" => {
+            log_info("Ran builtin command: rmdir");
+            run::rmdir(&cmdargs);
+        }
+        "touch" => {
+            log_info("Ran builtin command: touch");
+            run::touch(&cmdargs);
+        }
+        "cp" => {
+            log_info("Ran builtin command: cp");
+            run::cp(&cmdargs);
+        }
+        "ls" => {
+            log_info("Ran builtin command: ls");
+            run::ls(&cmdargs);
+        }
+        "mv" => {
+            log_info("Ran builtin command: mv");
+            run::mv(&cmdargs);
+        }
         _ => {
             log_error("Unknown command");
             println!("{}", "Not available in bsh library, maybe it is not installed?".yellow());
