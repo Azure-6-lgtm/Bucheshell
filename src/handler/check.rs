@@ -6,7 +6,7 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::Path;
 use std::process::{Command, Stdio}; 
-use crate::logger::buchelog::{log_info, log_warn, log_error};
+//use crate::logger::buchelog::{log_info, log_warn, log_error};
 //constants
 const USERPATH: &str = "/usr/bin/";
 const TERMUXPATH: &str = "/data/data/com.termux/files/usr/bin/";

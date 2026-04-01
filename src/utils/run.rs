@@ -1,4 +1,5 @@
 use std::fs;
+
 use std::fs::File;
 pub fn aboutbsh() {
     println!("Bucheshell is a shell that might be cool ig? :3");
@@ -45,7 +46,7 @@ pub fn builtin_cd(args: &[&str]) {
     }
 }
 pub fn bshversion() {
-    println!("Buche shell version 1.0 release");
+    println!("Buche shell version 1.5.0 release");
 }
 pub fn help() {
     println!("built in commands -> cd, about, ver,touch,mkdir,rmdir,rm,ls");
