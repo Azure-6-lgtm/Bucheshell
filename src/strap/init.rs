@@ -1,10 +1,10 @@
-use std::io::{self,Write};
-use rustyline::DefaultEditor;
-use colored::*;
-use std::env;
 use crate::handler::check;
+use crate::logger::buchelog::{log_error, log_info, log_warn};
+use colored::*;
 use rustyline::error::ReadlineError;
-use crate::logger::buchelog::{log_info, log_warn, log_error};
+use rustyline::DefaultEditor;
+use std::env;
+use std::io::{self, Write};
 
 fn get_display_dir() -> String {
     let dir = env::current_dir().unwrap();
@@ -28,30 +28,28 @@ pub fn init() {
     ctrlc::set_handler(|| {}).unwrap();
     loop {
         let cpath = get_display_dir();
-        let prompt = format!("[{}]{}",cpath.cyan(),">>".cyan());
+        let prompt = format!("[{}]{}", cpath.cyan(), ">>".cyan());
         //print!("[{}] >>",get_display_dir());
         let input_command = match rl.readline(&prompt) {
-    Ok(input) => {
-        rl.add_history_entry(input.as_str());
-        input
-    }
-    Err(ReadlineError::Interrupted) => {
-        println!(); // Ctrl+C
-        continue;
-    }
-    Err(ReadlineError::Eof) => {
-        break; // Ctrl+D exits shell
-    }
-    Err(err) => {
-        println!("Error: {:?}", err);
-        break;
-    }
-    };
-        let input_command = input_command
-            .trim();
-            io::stdout().flush().unwrap();
+            Ok(input) => {
+                rl.add_history_entry(input.as_str());
+                input
+            }
+            Err(ReadlineError::Interrupted) => {
+                println!(); // Ctrl+C
+                continue;
+            }
+            Err(ReadlineError::Eof) => {
+                break; // Ctrl+D exits shell
+            }
+            Err(err) => {
+                println!("Error: {:?}", err);
+                break;
+            }
+        };
+        let input_command = input_command.trim();
+        io::stdout().flush().unwrap();
         check::checkcmd(&input_command);
         log_info("Command passed to handler");
-  }
+    }
 }
-

@@ -1,11 +1,12 @@
+//import necessary crates
+use crate::logger::buchelog::{log_error, log_info, log_warn};
 use crate::utils::run;
 use colored::*;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::Path;
 use std::process::{Command, Stdio};
-use crate::logger::buchelog::{log_info, log_warn, log_error};
-
+//constants
 const USERPATH: &str = "/usr/bin/";
 const TERMUXPATH: &str = "/data/data/com.termux/files/usr/bin/";
 const SHELLPATH: &str = "/bin/";
@@ -38,31 +39,23 @@ pub fn checkcmd(input_command: &str) {
     let shellpath = format!("{}{}", SHELLPATH, cmd);
 
     let mut command_to_run = if Path::new(&termuxpath).exists() && !checkforbuiltin(cmd) {
-        //Command::new(&termuxpath);
-        //log_info("Ran command succesfully {termuxpath}");
         log_info(&format!("Ran command succesfully {}", termuxpath));
         Command::new(&termuxpath)
-        //log_info("Running command : {termuxpath}")
     } else if Path::new(&userpath).exists() && !checkforbuiltin(cmd) {
-        //Command::new(&userpath);
-        //log_info("Ran command succesfully {userpath}");
         log_info(&format!("Ran command succesfully {}", userpath));
         Command::new(&userpath)
     } else if Path::new(&shellpath).exists() && !checkforbuiltin(cmd) {
-        //Command::new(&shellpath);
-        //log_info("Ran command succesfully {shellpath}");
         log_info(&format!("Ran command succesfully {}", shellpath));
         Command::new(&shellpath)
     } else {
         checkutils(&cmd, &cmdargs);
         log_warn("Passing unknown command to utils checker");
-        return; 
+        return;
     };
 
     command_to_run.args(&cmdargs);
 
     if let Some(file) = output_file {
-        // Open the file for appending
         let file_handle = OpenOptions::new()
             .append(true)
             .create(true)
@@ -71,9 +64,7 @@ pub fn checkcmd(input_command: &str) {
         command_to_run.stdout(Stdio::from(file_handle));
     }
 
-    command_to_run
-        .status()
-        .expect("Bucheshell failed to run");
+    command_to_run.status().expect("Bucheshell failed to run");
 }
 
 pub fn checkutils(utilcmd: &str, cmdargs: &Vec<&str>) {
@@ -128,7 +119,10 @@ pub fn checkutils(utilcmd: &str, cmdargs: &Vec<&str>) {
         }
         _ => {
             log_error("Unknown command");
-            println!("{}", "Not available in bsh library, maybe it is not installed?".yellow());
+            println!(
+                "{}",
+                "Not available in bsh library, maybe it is not installed?".yellow()
+            );
         }
     };
 }

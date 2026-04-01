@@ -1,13 +1,13 @@
+use chrono::Local;
+use dirs::home_dir;
+use log::{error, info, warn};
 use simplelog::*;
 use std::fs::File;
 use std::path::PathBuf;
-use log::{info, warn, error};
-use chrono::Local;
-use dirs::home_dir;
 
 pub fn init_logger() {
     // Force Rust to use local timezone (important for Termux/Android)
-   // std::env::set_var("TZ", "Asia/Kolkata"); // replace with your timezone
+    // std::env::set_var("TZ", "Asia/Kolkata"); // replace with your timezone
 
     // ~/.bucheshell.log
     let mut log_path = home_dir().expect("Could not find home directory");
@@ -31,13 +31,25 @@ pub fn init_logger() {
 
 // Convenience logging functions with manual timestamp
 pub fn log_info(msg: &str) {
-    info!("[{}][INFO] {}", Local::now().format("%Y-%m-%d %H:%M:%S"), msg);
+    info!(
+        "[{}][INFO] {}",
+        Local::now().format("%Y-%m-%d %H:%M:%S"),
+        msg
+    );
 }
 
 pub fn log_warn(msg: &str) {
-    warn!("[{}][WARN] {}", Local::now().format("%Y-%m-%d %H:%M:%S"), msg);
+    warn!(
+        "[{}][WARN] {}",
+        Local::now().format("%Y-%m-%d %H:%M:%S"),
+        msg
+    );
 }
 
 pub fn log_error(msg: &str) {
-    error!("[{}][ERROR] {}", Local::now().format("%Y-%m-%d %H:%M:%S"), msg);
+    error!(
+        "[{}][ERROR] {}",
+        Local::now().format("%Y-%m-%d %H:%M:%S"),
+        msg
+    );
 }
