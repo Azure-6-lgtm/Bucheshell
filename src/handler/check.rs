@@ -5,7 +5,8 @@ use colored::*;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::Path;
-use std::process::{Command, Stdio}; 
+use std::process::{Command, Stdio};
+//use std::env;
 //use crate::logger::buchelog::{log_info, log_warn, log_error};
 //constants
 const USERPATH: &str = "/usr/bin/";
@@ -34,6 +35,28 @@ pub fn checkcmd(input_command: &str) {
 
     let cmd = parts[0];
     let cmdargs: Vec<&str> = parts[1..].to_vec();
+
+    if cmd == "export" && cmdargs.len() >= 3 && cmdargs[1] == "=" {
+        unsafe {
+            std::env::set_var(cmdargs[0], cmdargs[2]);
+            log_info("Set enviorment variable");
+        }
+        return;
+    }
+    if cmd == "echo" && cmdargs.len() == 1 {
+    let arg = cmdargs[0];
+
+    if arg.starts_with('$') {
+        let key = &arg[1..];
+
+        if let Ok(val) = std::env::var(key) {
+            println!("{}", val);
+        }
+    } else {
+        println!("{}", arg);
+    }
+    return;
+}
 
     let termuxpath = format!("{}{}", TERMUXPATH, cmd);
     let userpath = format!("{}{}", USERPATH, cmd);
@@ -122,7 +145,7 @@ pub fn checkutils(utilcmd: &str, cmdargs: &Vec<&str>) {
             log_error("Unknown command");
             println!(
                 "{}",
-                "Not available in bsh library, maybe it is not installed?".yellow()
+                "Command is not available!".yellow()
             );
         }
     };
