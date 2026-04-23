@@ -11,9 +11,10 @@ fn main() {
     buchelog::log_info("Bucheshell started succesfully");
     buchelog::log_warn("This is a warning example");
     buchelog::log_error("This is an error example");
+
     println!("---------------------------------------");
-    println!("{}","BUCHESHELL RELEASE 2.0.0 ENVIORMENT".red());
-    println!("{}","AS SHELL IS NOT FULLY COMPLETE YET,IT CAN BE BUGGY".red());
+    println!("{}","BUCHESHELL RELEASE 2.1.0 ".red());
+    println!("{}","BUCHESHELL IS NOT FULLY COMPLETE YET".red());
     println!("{}","RELEASES ARE KNOWN TO BE UNSTABLE".red());
     println!("{}","BE CAUTIOUS OF BUGS".red());
     println!("{}","----------------------------------------");

@@ -25,7 +25,6 @@ pub fn init() {
     //println!("Buche Shell 0.01 Testing enviorment");
     //println!("Made with love ");
     //println!("------------------------------------");
-    ctrlc::set_handler(|| {}).unwrap();
     loop {
         let cpath = get_display_dir();
         let prompt = format!("[{}]{}", cpath.cyan(), ">>".cyan());
