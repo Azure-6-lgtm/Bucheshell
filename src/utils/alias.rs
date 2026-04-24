@@ -4,7 +4,7 @@ use std::env;
 
 fn get_alias_file() -> String {
     let home = env::var("HOME").unwrap();
-    format!("{}/.bucheconf", home)
+    format!("{}/.bucherc", home)
 }
 
 pub fn resolve(input: &str) -> String {

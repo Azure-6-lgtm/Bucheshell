@@ -27,7 +27,7 @@ pub fn init() {
     //println!("------------------------------------");
     loop {
         let cpath = get_display_dir();
-        let prompt = format!("[{}]{}", cpath.cyan(), ">>".cyan());
+        let prompt = format!("{}{}{}{}","[".green(), cpath.cyan(),"]".green(), ">>".green());
         //print!("[{}] >>",get_display_dir());
         let input_command = match rl.readline(&prompt) {
             Ok(input) => {

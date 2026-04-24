@@ -1,101 +1,55 @@
+use std::env;
 use std::fs;
-
 use std::fs::File;
+use std::path::PathBuf;
+
+/* =========================
+   Helper: expand ~
+   ========================= */
+fn expand_tilde(input: &str) -> PathBuf {
+    if input == "~" || input.starts_with("~/") {
+        if let Some(home) = env::var_os("HOME") {
+            let mut path = PathBuf::from(home);
+
+            if input.len() > 2 {
+                path.push(&input[2..]); // skip "~/"
+            }
+
+            return path;
+        }
+    }
+
+    PathBuf::from(input)
+}
+
+/* =========================
+   Basic commands
+   ========================= */
+
 pub fn aboutbsh() {
     println!("Bucheshell is a shell that might be cool ig? :3");
 }
-pub fn ls(args: &[&str]) {
-    let mut owned: Option<String> = None;
 
-    let mut path = args.get(0).copied().unwrap_or(".");
-
-    if path.starts_with("~") {
-        if let Ok(home) = std::env::var("HOME") {
-            let replaced = path.replacen("~", &home, 1);
-            owned = Some(replaced);
-            path = owned.as_deref().unwrap();
-        }
-    }
-
-    match std::fs::read_dir(path) {
-        Ok(entries) => {
-            for entry in entries.flatten() {
-                print!("{}  ", entry.file_name().to_string_lossy());
-            }
-            println!();
-        }
-        Err(e) => eprintln!("ls: {}", e),
-    }
-}
-pub fn builtin_cd(args: &[&str]) {
-    use std::env;
-    use std::path::PathBuf;
-
-    let home = env::var("HOME").unwrap_or(String::from("/"));
-
-    let target = if args.is_empty() {
-        PathBuf::from(&home)
-    } else if args[0].starts_with("~") {
-        PathBuf::from(args[0].replacen("~", &home, 1))
-    } else {
-        PathBuf::from(args[0])
-    };
-
-    if let Err(e) = env::set_current_dir(&target) {
-        println!("cd: {}", e);
-    }
-}
 pub fn bshversion() {
-    println!("Buche shell version 2.0.0 release");
+    println!("Buche shell version 2.2.0 release");
 }
+
 pub fn help() {
-    println!("built in commands -> cd, about, ver,touch,mkdir,rmdir,rm,ls");
+    println!("Built in commands -> cd, about, ver, touch, mkdir, rmdir, rm, ls, export.");
+    println!("You can set custom aliases in \"~/.bucherc\"");
 }
+
 pub fn exit() {
     std::process::exit(0);
 }
-pub fn mkdir(args: &[&str]) {
-    if let Some(dir) = args.get(0) {
-        if let Err(e) = fs::create_dir(dir) {
-            eprintln!("mkdir: {}", e);
-        }
-    } else {
-        eprintln!("mkdir: missing operand");
-    }
-}
 
-pub fn touch(args: &[&str]) {
-    if let Some(file) = args.get(0) {
-        if let Err(e) = File::create(file) {
-            eprintln!("touch: {}", e);
-        }
-    } else {
-        eprintln!("touch: missing file");
-    }
-}
+/* =========================
+   File system commands
+   ========================= */
 
-pub fn rm(args: &[&str]) {
-    if let Some(file) = args.get(0) {
-        if let Err(e) = fs::remove_file(file) {
-            eprintln!("rm: {}", e);
-        }
-    } else {
-        eprintln!("rm: missing file");
-    }
-}
-
-pub fn rmdir(args: &[&str]) {
-    if let Some(dir) = args.get(0) {
-        if let Err(e) = fs::remove_dir(dir) {
-            eprintln!("rmdir: {}", e);
-        }
-    } else {
-        eprintln!("rmdir: missing dir");
-    }
-}
-
-/*pub fn ls(args: &[&str]) {
-    let path = args.get(0).map(|s| ).unwrap_or(".");
+pub fn ls(args: &[&str]) {
+    let path = args.get(0).copied().unwrap_or(".");
+    let path = expand_tilde(path);
 
     match fs::read_dir(path) {
         Ok(entries) => {
@@ -106,7 +60,67 @@ pub fn rmdir(args: &[&str]) {
         }
         Err(e) => eprintln!("ls: {}", e),
     }
-}*/
+}
+
+pub fn builtin_cd(args: &[&str]) {
+    let target = if args.is_empty() {
+        expand_tilde("~")
+    } else {
+        expand_tilde(args[0])
+    };
+
+    if let Err(e) = env::set_current_dir(&target) {
+        eprintln!("cd: {}", e);
+    }
+}
+
+pub fn mkdir(args: &[&str]) {
+    if let Some(dir) = args.get(0) {
+        let path = expand_tilde(dir);
+
+        if let Err(e) = fs::create_dir_all(path) {
+            eprintln!("mkdir: {}", e);
+        }
+    } else {
+        eprintln!("mkdir: missing operand");
+    }
+}
+
+pub fn touch(args: &[&str]) {
+    if let Some(file) = args.get(0) {
+        let path = expand_tilde(file);
+
+        if let Err(e) = File::create(path) {
+            eprintln!("touch: {}", e);
+        }
+    } else {
+        eprintln!("touch: missing file");
+    }
+}
+
+pub fn rm(args: &[&str]) {
+    if let Some(file) = args.get(0) {
+        let path = expand_tilde(file);
+
+        if let Err(e) = fs::remove_file(path) {
+            eprintln!("rm: {}", e);
+        }
+    } else {
+        eprintln!("rm: missing file");
+    }
+}
+
+pub fn rmdir(args: &[&str]) {
+    if let Some(dir) = args.get(0) {
+        let path = expand_tilde(dir);
+
+        if let Err(e) = fs::remove_dir(path) {
+            eprintln!("rmdir: {}", e);
+        }
+    } else {
+        eprintln!("rmdir: missing dir");
+    }
+}
 
 pub fn cp(args: &[&str]) {
     if args.len() < 2 {
@@ -114,7 +128,10 @@ pub fn cp(args: &[&str]) {
         return;
     }
 
-    if let Err(e) = fs::copy(&args[0], &args[1]) {
+    let src = expand_tilde(args[0]);
+    let dst = expand_tilde(args[1]);
+
+    if let Err(e) = fs::copy(src, dst) {
         eprintln!("cp: {}", e);
     }
 }
@@ -125,7 +142,10 @@ pub fn mv(args: &[&str]) {
         return;
     }
 
-    if let Err(e) = fs::rename(&args[0], &args[1]) {
+    let src = expand_tilde(args[0]);
+    let dst = expand_tilde(args[1]);
+
+    if let Err(e) = fs::rename(src, dst) {
         eprintln!("mv: {}", e);
     }
 }

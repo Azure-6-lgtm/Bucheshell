@@ -18,14 +18,14 @@ pub fn checkcmd(input_command: &str) {
         return;
     }
 
-    // 🔥 Step 1: Resolve alias FIRST
+    // Step 1: Resolve alias FIRST
     let resolved_input = alias::resolve(input_command);
 
-    // 🔥 Step 2: Split resolved input
+    // Step 2: Split resolved input
     let mut parts: Vec<&str> = resolved_input.split_whitespace().collect();
     let mut output_file: Option<&str> = None;
 
-    // 🔥 Step 3: Handle output redirection
+    // Step 3: Handle output redirection
     if let Some(pos) = parts.iter().position(|&x| x == ">>") {
         if pos + 1 < parts.len() {
             output_file = Some(parts[pos + 1]);
@@ -36,7 +36,7 @@ pub fn checkcmd(input_command: &str) {
         }
     }
 
-    // 🔥 Step 4: Safe command extraction
+    // Step 4: Safe command extraction
     let cmd = match parts.get(0) {
         Some(c) => *c,
         None => return,
@@ -47,6 +47,11 @@ pub fn checkcmd(input_command: &str) {
     // -----------------
     // Built-in commands
     // -----------------
+
+    if cmd == ".." && cmdargs.is_empty() {
+        std::env::set_current_dir("..").unwrap();
+        return;
+    } 
 
     // export
     if cmd == "export" && cmdargs.len() >= 3 && cmdargs[1] == "=" {
