@@ -4,8 +4,8 @@ use std::fs::File;
 use std::path::PathBuf;
 
 /* =========================
-   Helper: expand ~
-   ========================= */
+Helper: expand ~
+========================= */
 fn expand_tilde(input: &str) -> PathBuf {
     if input == "~" || input.starts_with("~/") {
         if let Some(home) = env::var_os("HOME") {
@@ -23,15 +23,15 @@ fn expand_tilde(input: &str) -> PathBuf {
 }
 
 /* =========================
-   Basic commands
-   ========================= */
+Basic commands
+========================= */
 
 pub fn aboutbsh() {
     println!("Bucheshell is a shell that might be cool ig? :3");
 }
 
 pub fn bshversion() {
-    println!("Buche shell version 2.2.0 release");
+    println!("Buche shell version 2.3.0 release");
 }
 
 pub fn help() {
@@ -44,8 +44,8 @@ pub fn exit() {
 }
 
 /* =========================
-   File system commands
-   ========================= */
+File system commands
+========================= */
 
 pub fn ls(args: &[&str]) {
     let path = args.get(0).copied().unwrap_or(".");

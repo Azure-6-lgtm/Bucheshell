@@ -1,6 +1,6 @@
 //import necessary crates
-use crate::utils::alias;
 use crate::logger::buchelog::{log_error, log_info, log_warn};
+use crate::utils::alias;
 use crate::utils::run;
 use colored::*;
 use std::fs::OpenOptions;
@@ -51,7 +51,7 @@ pub fn checkcmd(input_command: &str) {
     if cmd == ".." && cmdargs.is_empty() {
         std::env::set_current_dir("..").unwrap();
         return;
-    } 
+    }
 
     // export
     if cmd == "export" && cmdargs.len() >= 3 && cmdargs[1] == "=" {
@@ -122,9 +122,7 @@ pub fn checkcmd(input_command: &str) {
     // -----------------
     // Execute
     // -----------------
-    command_to_run
-        .status()
-        .expect("Bucheshell failed to run");
+    command_to_run.status().expect("Bucheshell failed to run");
 }
 
 // -----------------
@@ -194,4 +192,50 @@ pub fn checkutils(utilcmd: &str, cmdargs: &Vec<&str>) {
 
 fn checkforbuiltin(cmd: &str) -> bool {
     matches!(cmd, "mkdir" | "rm" | "touch" | "mv" | "cp" | "rmdir" | "ls")
+}
+
+// -----------------
+// Args deciphering
+// -----------------
+
+pub fn decipher_args(args: Vec<String>) {
+    if args.is_empty() {
+        //do nothing
+        return;
+    }
+
+    match args[1].as_str() {
+        "-rc" => {
+            if args.len() >= 3 {
+                // buchesh -rc apt install bucheshell
+                let cmdtorun = args[2].clone();
+                let cmdtorunargs: Vec<String> = {
+                    if args.len() >= 4 {
+                        args[3..].to_vec()
+                    } else {
+                        vec![]
+                    }
+                };
+                Command::new(cmdtorun)
+                    .args(cmdtorunargs)
+                    .status()
+                    .expect("Failed to run command");
+                std::process::exit(0);
+            }
+        }
+        "-rf" => {
+            println!("Under Construction :)");
+            std::process::exit(0);
+        }
+        "-help" => {
+            println!("Built in commands -> cd, about, ver, touch, mkdir, rmdir, rm, ls, export.");
+            println!("You can set custom aliases in \"~/.bucherc\"");
+            std::process::exit(0);
+        }
+        "-ver" => {
+            println!("Bucheshell Version 2.3.0");
+            std::process::exit(0)
+        }
+        _ => {}
+    }
 }
