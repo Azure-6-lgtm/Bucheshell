@@ -149,3 +149,40 @@ pub fn mv(args: &[&str]) {
         eprintln!("mv: {}", e);
     }
 }
+
+use std::process::{Command, Stdio};
+
+pub fn pipe(args: &[&str]) {
+    let pipe_pos = match args.iter().position(|&x| x == "|") {
+        Some(pos) => pos,
+        None => {
+            eprintln!("pipe: missing '|'");
+            return;
+        }
+    };
+
+    let (left, right_with_pipe) = args.split_at(pipe_pos);
+    let right = &right_with_pipe[1..];
+
+    if left.is_empty() || right.is_empty() {
+        eprintln!("pipe: invalid syntax");
+        return;
+    }
+
+    let mut first = Command::new(left[0])
+        .args(&left[1..])
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap();
+
+    let stdout = first.stdout.take().unwrap();
+
+    let mut second = Command::new(right[0])
+        .args(&right[1..])
+        .stdin(stdout)
+        .spawn()
+        .unwrap();
+
+    second.wait().unwrap();
+    first.wait().unwrap();
+}

@@ -179,6 +179,10 @@ pub fn checkutils(utilcmd: &str, cmdargs: &Vec<&str>) {
             log_info("Ran builtin command: mv");
             run::mv(cmdargs);
         }
+        "pipe" => {
+            log_info("Ran builtin command: pipe");
+            run::pipe(cmdargs);
+        }
         _ => {
             log_error("Unknown command");
             println!("{}", "Command is not available!".yellow());
@@ -191,7 +195,10 @@ pub fn checkutils(utilcmd: &str, cmdargs: &Vec<&str>) {
 // -----------------
 
 fn checkforbuiltin(cmd: &str) -> bool {
-    matches!(cmd, "mkdir" | "rm" | "touch" | "mv" | "cp" | "rmdir" | "ls")
+    matches!(
+        cmd,
+        "mkdir" | "rm" | "touch" | "mv" | "cp" | "rmdir" | "ls" | "pipe"
+    )
 }
 
 // -----------------
