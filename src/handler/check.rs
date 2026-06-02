@@ -240,7 +240,7 @@ pub fn decipher_args(args: Vec<String>) {
             std::process::exit(0);
         }
         "-ver" => {
-            println!("Bucheshell Version 2.3.0");
+            println!("Bucheshell Version 2.4.0");
             std::process::exit(0)
         }
         _ => {}

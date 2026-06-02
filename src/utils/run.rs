@@ -31,7 +31,7 @@ pub fn aboutbsh() {
 }
 
 pub fn bshversion() {
-    println!("Buche shell version 2.3.0 release");
+    println!("Buche shell version 2.4.0 release");
 }
 
 pub fn help() {
