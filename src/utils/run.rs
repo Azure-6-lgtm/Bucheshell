@@ -2,6 +2,7 @@ use std::env;
 use std::fs;
 use std::fs::File;
 use std::path::PathBuf;
+use sysinfo::{Components, Disks, System};
 
 /* =========================
 Helper: expand ~
@@ -31,7 +32,7 @@ pub fn aboutbsh() {
 }
 
 pub fn bshversion() {
-    println!("Buche shell version 2.4.0 release");
+    println!("Buche shell version 2.5.0 release");
 }
 
 pub fn help() {
@@ -185,4 +186,33 @@ pub fn pipe(args: &[&str]) {
 
     second.wait().unwrap();
     first.wait().unwrap();
+}
+
+pub fn sysinfo() {
+    let mut sys = System::new_all();
+    sys.refresh_all();
+
+    println!("=> system:");
+    // RAM and swap information:
+    println!("total memory: {} bytes", sys.total_memory());
+    println!("used memory : {} bytes", sys.used_memory());
+    println!("total swap  : {} bytes", sys.total_swap());
+    println!("used swap   : {} bytes", sys.used_swap());
+
+    // Display system information:
+    println!("System name:             {:?}", System::name());
+    println!("System kernel version:   {:?}", System::kernel_version());
+    println!("System OS version:       {:?}", System::os_version());
+    println!("System host name:        {:?}", System::host_name());
+
+    // Number of CPUs:
+    println!("NB CPUs: {}", sys.cpus().len());
+}
+
+pub fn ps() {
+    let mut sys = System::new_all();
+    sys.refresh_all();
+    for (pid, process) in sys.processes() {
+        println!("[{pid}] {:?} {:?}", process.name(), process.disk_usage());
+    }
 }
