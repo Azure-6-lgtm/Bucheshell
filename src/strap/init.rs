@@ -4,6 +4,7 @@ use colored::*;
 use rustyline::error::ReadlineError;
 use rustyline::DefaultEditor;
 use std::env;
+use std::fs;
 use std::io::{self, Write};
 
 fn get_display_dir() -> String {
@@ -19,7 +20,53 @@ fn get_display_dir() -> String {
     }
 }
 
+fn get_config_file() -> String {
+    let home = env::var("HOME").unwrap();
+    format!("{}/.bucherc", home)
+}
+
+fn get_prompt() -> String {
+    let content = fs::read_to_string(get_config_file()).unwrap_or_default();
+    for line in content.lines() {
+        let line = line.trim();
+
+        if let Some(rest) = line.strip_prefix("prompt =") {
+            return rest.trim().to_string();
+        }
+    }
+
+    String::from("$USER@$HOST : $PWD$")
+}
+
+fn render_prompt(prompt: &str) -> String {
+    prompt
+        .replace("$USER", &get_user())
+        .replace("$HOST", &get_host())
+        .replace("$PWD", &get_display_dir())
+        .replace("$TIME", &get_time())
+}
+
+fn get_user() -> String {
+    std::env::var("USER")
+        .or_else(|_| std::env::var("USERNAME"))
+        .unwrap_or_else(|_| "unknown".to_string())
+}
+
+fn get_host() -> String {
+    std::fs::read_to_string("/proc/sys/kernel/hostname")
+        .unwrap_or_else(|_| "localhost".to_string())
+        .trim()
+        .to_string()
+}
+
+use chrono::Local;
+
+fn get_time() -> String {
+    Local::now().format("%H:%M").to_string()
+}
+
 pub fn init() {
+    let prompt_template = get_prompt();
     let mut rl = DefaultEditor::new().unwrap();
     log_info("Bootstrap started");
     //println!("Buche Shell 0.01 Testing enviorment");
@@ -27,7 +74,14 @@ pub fn init() {
     //println!("------------------------------------");
     loop {
         let cpath = get_display_dir();
-        let prompt = format!("{}{}{}{}","[".green(), cpath.cyan(),"]".green(), ">>".green());
+        // let prompt = format!(
+        /*    "{}{}{}{}",
+            "[".green(),
+            cpath.cyan(),
+            "]".green(),
+            ">>".green()
+        );*/
+        let prompt = render_prompt(&prompt_template);
         //print!("[{}] >>",get_display_dir());
         let input_command = match rl.readline(&prompt) {
             Ok(input) => {
