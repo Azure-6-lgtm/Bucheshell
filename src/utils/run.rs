@@ -213,6 +213,6 @@ pub fn ps() {
     let mut sys = System::new_all();
     sys.refresh_all();
     for (pid, process) in sys.processes() {
-        println!("[{pid}] {:?} {:?}", process.name(), process.disk_usage());
+        println!("[{pid}] {:?} {:?} \n", process.name(), process.disk_usage());
     }
 }
