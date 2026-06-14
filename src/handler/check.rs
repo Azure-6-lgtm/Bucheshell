@@ -245,10 +245,11 @@ pub fn decipher_args(args: Vec<String>) {
         "-help" => {
             println!("Built in commands -> cd, about, ver, touch, mkdir, rmdir, rm, ls, export.");
             println!("You can set custom aliases in \"~/.bucherc\"");
+            println!("Visit bucheshell github page to learn more");
             std::process::exit(0);
         }
         "-ver" => {
-            println!("Bucheshell Version 2.5.0");
+            println!("Bucheshell Version 2.6.0");
             std::process::exit(0)
         }
         _ => {}
