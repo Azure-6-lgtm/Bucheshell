@@ -12,7 +12,7 @@ fn main() {
         handler::check::decipher_args(args);
     } else {
     }
-    buchelog::init_logger(); // only call once
+    buchelog::init_logger();
 
     buchelog::log_info("Bucheshell started succesfully");
     buchelog::log_warn("This is a warning example");
